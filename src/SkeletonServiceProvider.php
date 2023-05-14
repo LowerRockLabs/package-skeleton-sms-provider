@@ -2,24 +2,54 @@
 
 namespace VendorName\Skeleton;
 
-use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
-use VendorName\Skeleton\Commands\SkeletonCommand;
+use Illuminate\Foundation\Console\AboutCommand;
+use Illuminate\Routing\Router;
+use Illuminate\Support\ServiceProvider;
+use VendorName\Skeleton\Http\Middleware\SkeletonMiddleware;
 
-class SkeletonServiceProvider extends PackageServiceProvider
+class SkeletonServiceProvider extends ServiceProvider
 {
-    public function configurePackage(Package $package): void
+    /**
+     * @return void
+     */
+    public function boot()
     {
+        $router = $this->app->make(Router::class);
+        $router->aliasMiddleware('Skeletonmw', SkeletonMiddleware::class);
+
         /*
-         * This class is a Package Service Provider
-         *
-         * More info: https://github.com/spatie/laravel-package-tools
+         * Optional methods to load package assets
          */
-        $package
-            ->name('skeleton')
-            ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_skeleton_table')
-            ->hasCommand(SkeletonCommand::class);
+
+        $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/config.php', 'smsProvider-Skeleton'
+        );
+
+        // $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'laravel-advanced-authentication');
+        AboutCommand::add('SMS Provider - Skeleton', fn () => ['Version' => '1.0.0']);
+
+        if ($this->app->runningInConsole()) {
+
+            $this->publishes([
+                __DIR__.'/../config/config.php' => config_path('lrl-smsmanager-Skeleton.php'),
+            ], 'lrl-sms-Skeleton-config');
+
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function register()
+    {
+        $this->app->bind('Skeletonsmsgateway', function ($app) {
+            return new SkeletonSmsGateway();
+        });
+
+        $this->app->bind('Skeletonvoice', function ($app) {
+            return new SkeletonVoiceGateway();
+        });
+        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'smsProvider-Skeleton');
     }
 }
