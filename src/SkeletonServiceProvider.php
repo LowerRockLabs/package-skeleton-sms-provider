@@ -23,7 +23,7 @@ class SkeletonServiceProvider extends ServiceProvider
 
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         $this->mergeConfigFrom(
-            __DIR__.'/../config/config.php', 'smsProvider-Skeleton'
+            __DIR__.'/../config/config.php', 'Skeleton'
         );
 
         // $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'laravel-advanced-authentication');
@@ -32,7 +32,7 @@ class SkeletonServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
 
             $this->publishes([
-                __DIR__.'/../config/config.php' => config_path('lrl-smsmanager-Skeleton.php'),
+                __DIR__.'/../config/config.php' => config_path('Skeleton.php'),
             ], 'lrl-sms-Skeleton-config');
 
         }
@@ -50,6 +50,6 @@ class SkeletonServiceProvider extends ServiceProvider
         $this->app->bind('Skeletonvoice', function ($app) {
             return new SkeletonVoiceGateway();
         });
-        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'smsProvider-Skeleton');
+        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'Skeleton');
     }
 }
