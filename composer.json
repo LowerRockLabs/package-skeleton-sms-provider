@@ -18,8 +18,7 @@
     "require": {
         "php": "^8.1",
         "illuminate/contracts": "^10.0",
-        "lowerrocklabs/laravel-sms": "dev-main|dev-develop",
-        "illuminate/contracts": "^10.0"
+        "lowerrocklabs/laravel-sms": "dev-main|dev-develop"
     },
     "require-dev": {
     },
@@ -54,10 +53,25 @@
                 "VendorName\\Skeleton\\SkeletonServiceProvider"
             ],
             "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\Facades\\Skeleton"
+                "SkeletonSMS": "VendorName\\Skeleton\\Facades\\SkeletonSMS",
+                "SkeletonVoice": "VendorName\\Skeleton\\Facades\\SkeletonVoice"
             }
         }
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/LowerRockLabs/laravel-sms.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/LowerRockLabs/laravel-phonenumbers.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/LowerRockLabs/laravel-base-functions.git"
+        }
+    ]
 }
