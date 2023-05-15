@@ -2,18 +2,21 @@
 
 namespace VendorName\Skeleton;
 
+use Exception;
+use Illuminate\Support\Facades\Log;
+use LowerRockLabs\LaravelSMSManager\Facades\SmsLogger;
 use LowerRockLabs\LaravelSMSManager\Models\SmsPrice;
-use LowerRockLabs\LaravelSMSManager\Traits\LogsSMS;
 
 class SkeletonSmsGateway implements \LowerRockLabs\LaravelSMSManager\Traits\MFA\SMSGateways\SmsGatewayInterface
 {
-    use LogsSMS;
-
     protected $client;
 
     protected $message_from;
 
     private $_response;
+
+    protected string $phoneNumber;
+    protected string $message;
 
     /**
      * The class constructor
@@ -22,6 +25,28 @@ class SkeletonSmsGateway implements \LowerRockLabs\LaravelSMSManager\Traits\MFA\
     {
         $this->providerName = 'Skeleton';
 
+    }
+
+    public function setPhoneNumber(string $phoneNumber): self
+    {
+        $this->phoneNumber = $phoneNumber;
+        return $this;
+    }
+
+    public function getPhoneNumber(): string
+    {
+        return $this->phoneNumber ?? '';
+    }
+
+    public function setMessage(string $message): self
+    {
+        $this->message = $message;
+        return $this;
+    }
+
+    public function getMessage(): string
+    {
+        return $this->message ?? '';
     }
 
     /**
@@ -33,6 +58,19 @@ class SkeletonSmsGateway implements \LowerRockLabs\LaravelSMSManager\Traits\MFA\
      */
     public function sendSms($smsTo, $message)
     {
+        if (!is_null($smsTo))
+        {
+            $this->phoneNumber = $smsTo;
+        }
+        if (!is_null($message))
+        {
+            $this->message = $message;
+        }
+
+        $sender = config('Skeleton.SEND_SMS_FROM');
+
+
+        SmsLogger::setRecipient($this->phoneNumber)->setSender($sender)->setMessage($this->message)->setProviderName("Skeleton")->setMessageSid($uniqueID)->logMessage();
     }
 
     /**

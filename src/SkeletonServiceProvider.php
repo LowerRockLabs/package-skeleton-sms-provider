@@ -47,9 +47,6 @@ class SkeletonServiceProvider extends ServiceProvider
             return new SkeletonSmsGateway();
         });
 
-        $this->app->bind('Skeletonvoice', function ($app) {
-            return new SkeletonVoiceGateway();
-        });
         $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'Skeleton');
     }
 }
