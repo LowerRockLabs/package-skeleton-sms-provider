@@ -29,13 +29,6 @@ class SkeletonServiceProvider extends ServiceProvider
         // $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'laravel-advanced-authentication');
         AboutCommand::add('SMS Provider - Skeleton', fn () => ['Version' => '1.0.0']);
 
-        if ($this->app->runningInConsole()) {
-
-            $this->publishes([
-                __DIR__.'/../config/config.php' => config_path('Skeleton.php'),
-            ], 'lrl-sms-Skeleton-config');
-
-        }
     }
 
     /**

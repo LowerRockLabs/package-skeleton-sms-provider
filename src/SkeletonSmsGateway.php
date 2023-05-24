@@ -9,14 +9,14 @@ use LowerRockLabs\LaravelSMSManager\Models\SmsPrice;
 
 class SkeletonSmsGateway implements \LowerRockLabs\LaravelSMSManager\Traits\MFA\SMSGateways\SmsGatewayInterface
 {
-    protected $client;
-
-    protected $message_from;
-
-    private $_response;
 
     protected string $phoneNumber;
+
     protected string $message;
+
+    protected string $senderName;
+
+    protected string $providerName;
 
     /**
      * The class constructor
@@ -24,12 +24,15 @@ class SkeletonSmsGateway implements \LowerRockLabs\LaravelSMSManager\Traits\MFA\
     public function __construct()
     {
         $this->providerName = 'Skeleton';
+        $this->senderName = config('lrlSMSManager.provider-Skeleton.SEND_SMS_FROM');
+
 
     }
 
     public function setPhoneNumber(string $phoneNumber): self
     {
         $this->phoneNumber = $phoneNumber;
+
         return $this;
     }
 
@@ -38,15 +41,58 @@ class SkeletonSmsGateway implements \LowerRockLabs\LaravelSMSManager\Traits\MFA\
         return $this->phoneNumber ?? '';
     }
 
+    protected function checkPhoneNumber(): bool
+    {
+        if (empty($this->phoneNumber)) {
+            Log::error('SMSLog - Empty phoneNumber');
+            throw new Exception('Empty phoneNumber');
+        }
+
+        return true;
+    }
+
+    public function setSenderName(string $senderName): self
+    {
+        $this->senderName = $senderName;
+
+        return $this;
+    }
+
+    public function getSenderName(): string
+    {
+        return $this->senderName ?? '';
+    }
+
+    public function checkSenderName(): bool
+    {
+        if (empty($this->senderName)) {
+            Log::error('SMSLog - Empty sender name');
+            throw new Exception('Empty sender name');
+        }
+
+        return true;
+    }
+
     public function setMessage(string $message): self
     {
         $this->message = $message;
+
         return $this;
     }
 
     public function getMessage(): string
     {
         return $this->message ?? '';
+    }
+
+    public function checkMessage(): bool
+    {
+        if (empty($this->message)) {
+            Log::error('SMSLog - Empty message');
+            throw new Exception('Empty message');
+        }
+
+        return true;
     }
 
     /**
@@ -56,27 +102,37 @@ class SkeletonSmsGateway implements \LowerRockLabs\LaravelSMSManager\Traits\MFA\
      * @param  string  $message The sms message
      * @return mixed The response from API
      */
-    public function sendSms($smsTo, $message)
+    public function sendSms($smsTo = null, $message = null, string $messageID = null)
     {
-        if (!is_null($smsTo))
-        {
+        if (! is_null($smsTo)) {
             $this->phoneNumber = $smsTo;
         }
-        if (!is_null($message))
-        {
+        if (! is_null($message)) {
             $this->message = $message;
         }
 
-        $sender = config('Skeleton.SEND_SMS_FROM');
+        if ($this->checkPhoneNumber() && $this->checkMessage() && $this->checkSenderName()) {
+            // Send Message
+
+            // Update Log
+            if (is_null($messageID)) {
+                $messageID = SmsLogger::setRecipient($this->phoneNumber)->setSender($this->senderName)->setMessage($this->message)->setMessageStatus('Sent to Provider')->setProviderName($this->providerName)->setMessageSid($uniqueID)->logMessage();
+            } else {
+                $message = SmsLogger::setMessageID($messageID)->setProviderName($this->providerName)->setSender($this->senderName)->setMessageStatus('Sent to Provider')->updateMessage();
+            }
+            return $messageID;
+
+        } else {
+            return false;
+        }
 
 
-        SmsLogger::setRecipient($this->phoneNumber)->setSender($sender)->setMessage($this->message)->setProviderName("Skeleton")->setMessageSid($uniqueID)->logMessage();
     }
 
     /**
      * The function to get response from Skeleton API
      */
-    public function getResponseData(): ResponseData
+    public function getResponseData()
     {
     }
 
@@ -88,6 +144,16 @@ class SkeletonSmsGateway implements \LowerRockLabs\LaravelSMSManager\Traits\MFA\
 
         return [
         ];
+    }
+
+    /**
+     * Get the status of a message based on the Message ID - this can be taken from sendSMS or from a history report
+     *
+     * @return array|mixed
+     */
+    public function getMessageStatus($messageid)
+    {
+        return 'Unknown';
     }
 
     public function getCurrentPrices(array $countries): void

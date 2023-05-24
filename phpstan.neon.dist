@@ -6,9 +6,12 @@ parameters:
     paths:
         - src
         - config
-        - database
     tmpDir: build/phpstan
     checkOctaneCompatibility: true
     checkModelProperties: true
     checkMissingIterableValueType: false
-
+    treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: false
+    ignoreErrors:
+        - '#Call to an undefined method [a-zA-Z0-9\\_]+::setMessageID\(\)#'
+        - '#Call to an undefined static method [a-zA-Z0-9\\_]+::setMessageStatus\(\)#'

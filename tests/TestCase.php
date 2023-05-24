@@ -5,12 +5,18 @@ namespace VendorName\Skeleton\Tests;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
 use VendorName\Skeleton\SkeletonServiceProvider;
+use VendorName\Skeleton\SkeletonSmsGateway;
+use Livewire\LivewireServiceProvider;
 
 class TestCase extends Orchestra
 {
+    public SkeletonSmsGateway $logGateway;
+
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->logGateway = new LaravelSmsLogGateway();
 
         Factory::guessFactoryNamesUsing(
             fn (string $modelName) => 'VendorName\\Skeleton\\Database\\Factories\\'.class_basename($modelName).'Factory'
@@ -21,6 +27,7 @@ class TestCase extends Orchestra
     {
         return [
             SkeletonServiceProvider::class,
+            LivewireServiceProvider::class,
         ];
     }
 
