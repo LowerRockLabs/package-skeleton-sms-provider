@@ -71,7 +71,7 @@
                 "VendorName\\Skeleton\\SkeletonServiceProvider"
             ],
             "aliases": {
-                "SkeletonSMS": "VendorName\\Skeleton\\Facades\\SkeletonSMS",
+                "SkeletonSMS": "VendorName\\Skeleton\\Facades\\SkeletonSMS"
             }
         }
     },
