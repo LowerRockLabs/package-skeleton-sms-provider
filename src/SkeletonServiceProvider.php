@@ -6,6 +6,7 @@ use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use VendorName\Skeleton\Http\Middleware\SkeletonMiddleware;
+use VendorName\Skeleton\Providers\EventServiceProvider;
 
 class SkeletonServiceProvider extends ServiceProvider
 {
@@ -39,6 +40,8 @@ class SkeletonServiceProvider extends ServiceProvider
         $this->app->bind('Skeletonsmsgateway', function ($app) {
             return new SkeletonSmsGateway();
         });
+
+        $this->app->register(EventServiceProvider::class);
 
         $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'Skeleton');
     }

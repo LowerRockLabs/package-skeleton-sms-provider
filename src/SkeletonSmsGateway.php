@@ -24,8 +24,7 @@ class SkeletonSmsGateway implements \LowerRockLabs\LaravelSMSManager\Traits\MFA\
     public function __construct()
     {
         $this->providerName = 'Skeleton';
-        $this->senderName = config('lrlSMSManager.provider-Skeleton.SEND_SMS_FROM');
-
+        $this->senderName = config('lrlSMSManager.Skeleton.SEND_SMS_FROM');
 
     }
 
@@ -44,9 +43,10 @@ class SkeletonSmsGateway implements \LowerRockLabs\LaravelSMSManager\Traits\MFA\
     protected function checkPhoneNumber(): bool
     {
         if (empty($this->phoneNumber)) {
-            Log::error('SMSLog - Empty phoneNumber');
-            throw new Exception('Empty phoneNumber');
+            Log::error('Skeleton - SkeletonSmsGateway - Empty phoneNumber');
+            throw new Exception('Skeleton - Empty phoneNumber');
         }
+        Log::debug('SkeletonSkeleton - SkeletonSmsGateway: checkPhoneNumber Success');
 
         return true;
     }
@@ -54,6 +54,7 @@ class SkeletonSmsGateway implements \LowerRockLabs\LaravelSMSManager\Traits\MFA\
     public function setSenderName(string $senderName): self
     {
         $this->senderName = $senderName;
+        Log::debug('Skeleton - SkeletonSmsGateway: setSenderName Success');
 
         return $this;
     }
@@ -66,9 +67,10 @@ class SkeletonSmsGateway implements \LowerRockLabs\LaravelSMSManager\Traits\MFA\
     public function checkSenderName(): bool
     {
         if (empty($this->senderName)) {
-            Log::error('SMSLog - Empty sender name');
-            throw new Exception('Empty sender name');
+            Log::error('Skeleton - SkeletonSmsGateway - Empty sender name');
+            throw new Exception('Skeleton - Empty sender name');
         }
+        Log::debug('Skeleton - SkeletonSmsGateway: checkSenderName Success');
 
         return true;
     }
@@ -76,6 +78,7 @@ class SkeletonSmsGateway implements \LowerRockLabs\LaravelSMSManager\Traits\MFA\
     public function setMessage(string $message): self
     {
         $this->message = $message;
+        Log::debug('Skeleton - SkeletonSmsGateway: setMessage');
 
         return $this;
     }
@@ -85,12 +88,13 @@ class SkeletonSmsGateway implements \LowerRockLabs\LaravelSMSManager\Traits\MFA\
         return $this->message ?? '';
     }
 
-    public function checkMessage(): bool
+    public function checkMessage()
     {
         if (empty($this->message)) {
-            Log::error('SMSLog - Empty message');
-            throw new Exception('Empty message');
+            Log::error('Skeleton - SkeletonSmsGateway - Empty message');
+            throw new Exception('Skeleton - Empty message');
         }
+        Log::debug('Skeleton - SkeletonSmsGateway: checkMessage success');
 
         return true;
     }
@@ -104,6 +108,8 @@ class SkeletonSmsGateway implements \LowerRockLabs\LaravelSMSManager\Traits\MFA\
      */
     public function sendSms($smsTo = null, $message = null, string $messageID = null)
     {
+        Log::debug('Skeleton - SkeletonSmsGateway: sendSms Start');
+
         if (! is_null($smsTo)) {
             $this->phoneNumber = $smsTo;
         }
@@ -112,28 +118,42 @@ class SkeletonSmsGateway implements \LowerRockLabs\LaravelSMSManager\Traits\MFA\
         }
 
         if ($this->checkPhoneNumber() && $this->checkMessage() && $this->checkSenderName()) {
-            // Send Message
+            $uniqueID = $this->providerName.'-'.md5($this->senderName.'-'.$this->phoneNumber.'-'.now());
 
-            // Update Log
             if (is_null($messageID)) {
-                $messageID = SmsLogger::setRecipient($this->phoneNumber)->setSender($this->senderName)->setMessage($this->message)->setMessageStatus('Sent to Provider')->setProviderName($this->providerName)->setMessageSid($uniqueID)->logMessage();
+                Log::debug('Skeleton - SkeletonSmsGateway - sendSms - No Existing SmsLogger');
+
+                $messageID = SmsLogger::setRecipient($this->phoneNumber)->setSender($this->senderName)->setMessage($this->message)->setMessageStatus('Sent')->setProviderName($this->providerName)->setMessageSid($uniqueID)->logMessage();
             } else {
-                $message = SmsLogger::setMessageID($messageID)->setProviderName($this->providerName)->setSender($this->senderName)->setMessageStatus('Sent to Provider')->updateMessage();
+                Log::debug('Skeleton - SkeletonSmsGateway - sendSms - Update Existing SmsLogger');
+                $message = SmsLogger::setMessageID($messageID)->setProviderName($this->providerName)->setSender($this->senderName)->setMessageStatus('Sent')->updateMessage();
             }
+            Log::info('-------');
+            Log::info('SMS Sent using Log Only');
+            Log::info('smsTo:'.$this->phoneNumber);
+            Log::info('messageFrom:'.$this->senderName);
+            Log::info('message:'.$this->message);
+            Log::info('sid:'.$uniqueID);
+            Log::info('MessageID:'.$messageID);
+            Log::info('-------');
+
             return $messageID;
 
         } else {
+            Log::error('Skeleton - SkeletonSmsGateway: Failed to Send Message');
+
             return false;
         }
-
 
     }
 
     /**
-     * The function to get response from Skeleton API
+     * The function to get response from LaravelSmsTextlocal API
      */
     public function getResponseData()
     {
+        Log::debug('Skeleton - SkeletonSmsGateway: getResponseData Start');
+
     }
 
     /**
@@ -141,6 +161,7 @@ class SkeletonSmsGateway implements \LowerRockLabs\LaravelSMSManager\Traits\MFA\
      */
     public function setupLineIntel(string $phoneNumber): array
     {
+        Log::debug('Skeleton - SkeletonSmsGateway: setupLineIntel Start');
 
         return [
         ];
@@ -153,11 +174,15 @@ class SkeletonSmsGateway implements \LowerRockLabs\LaravelSMSManager\Traits\MFA\
      */
     public function getMessageStatus($messageid)
     {
-        return 'Unknown';
+        Log::debug('Skeleton - SkeletonSmsGateway: getMessageStatus Start');
+
+        return 'Delivered';
     }
 
     public function getCurrentPrices(array $countries): void
     {
+        Log::debug('Skeleton - SkeletonSmsGateway: getCurrentPrices Start');
 
     }
+
 }

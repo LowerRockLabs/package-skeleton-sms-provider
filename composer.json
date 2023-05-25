@@ -72,7 +72,6 @@
             ],
             "aliases": {
                 "SkeletonSMS": "VendorName\\Skeleton\\Facades\\SkeletonSMS",
-                "SkeletonVoice": "VendorName\\Skeleton\\Facades\\SkeletonVoice"
             }
         }
     },
@@ -90,14 +89,6 @@
         {
             "type": "vcs",
             "url": "git@github.com:lowerrocklabs/laravel-base-functions.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:lowerrocklabs/laravel-sms-clicksend.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:lowerrocklabs/laravel-sms-twilio.git"
         }
     ]
 }
