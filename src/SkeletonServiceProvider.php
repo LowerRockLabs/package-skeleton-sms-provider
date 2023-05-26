@@ -15,19 +15,19 @@ class SkeletonServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // Middleware - Only Needed if In Use
         $router = $this->app->make(Router::class);
         $router->aliasMiddleware('Skeletonmw', SkeletonMiddleware::class);
 
-        /*
-         * Optional methods to load package assets
-         */
-
+        // Load Routes For Inbound SMS and Delivery Reports
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+
+        // Load Config
         $this->mergeConfigFrom(
-            __DIR__.'/../config/config.php', 'Skeleton'
+            __DIR__.'/../config/config.php', 'lrlSMSManager'
         );
 
-        // $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'laravel-advanced-authentication');
+        // About Command
         AboutCommand::add('SMS Provider - Skeleton', fn () => ['Version' => '1.0.0']);
 
     }
@@ -37,12 +37,15 @@ class SkeletonServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        // Bind Facade
         $this->app->bind('Skeletonsmsgateway', function ($app) {
             return new SkeletonSmsGateway();
         });
 
+        // Register Event Provider
         $this->app->register(EventServiceProvider::class);
 
-        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'Skeleton');
+        // Merge Config with lrlSMSManager Core
+        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'lrlSMSManager');
     }
 }

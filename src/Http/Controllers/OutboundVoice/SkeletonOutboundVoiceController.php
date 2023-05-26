@@ -15,6 +15,9 @@ class SkeletonOutboundVoiceController extends \App\Http\Controllers\Controller
 
     public $response;
 
+    /**
+     * Used to Validate that the request has come from the provider
+     */
     public function checkSecurity(Request $request)
     {
 

@@ -23,6 +23,9 @@ class SkeletonInboundSMSController extends \App\Http\Controllers\Controller impl
 
     }
 
+    /**
+     * Used to dispatch the SMS Job
+     */
     public function dispatchSMSJob(string $from, string $to, string $body, string $messageID, string $price, string $provider)
     {
         StoreSMSJob::dispatch($from, $to, $body, $messageID, $price, $provider);
